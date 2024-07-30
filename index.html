@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenue Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #F4F4F4;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"],
+        input[type="datetime-local"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45A049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <label for="currentRevenue">Current Revenue:</label>
+        <input type="number" id="currentRevenue" step="0.01">
+    </div>
+    <div>
+        <label for="dateTime">Select Date and Time:</label>
+        <input type="datetime-local" id="dateTime">
+    </div>
+    <div>
+        <label for="apps">Select Apps:</label>
+        <select id="apps" multiple>
+            <option value="app1" data-increase="10">App 1 (10% increase)</option>
+            <option value="app2" data-increase="15">App 2 (15% increase)</option>
+            <option value="app3" data-increase="20">App 3 (20% increase)</option>
+        </select>
+    </div>
+    <div>
+        <label for="months">Select Duration (Months):</label>
+        <select id="months">
+            <option value="1">1 Month</option>
+            <option value="6">6 Months</option>
+            <option value="12">12 Months</option>
+        </select>
+    </div>
+    <button onclick="calculateRevenue()">Calculate</button>
+    <div class="result" id="result"></div>
+    <script>
+        function calculateRevenue() {
+            const currentRevenueInput = document.getElementById('currentRevenue').value;
+            const currentRevenue = parseFloat(currentRevenueInput);
+            if (isNaN(currentRevenue)) {
+                document.getElementById('result').innerHTML = <p>Please enter a valid number for current revenue.</p>;
+                return;
+            }
+            const selectedApps = document.getElementById('apps').selectedOptions;
+            const selectedMonths = parseInt(document.getElementById('months').value);
+            let totalIncrease = 0;
+            for (let app of selectedApps) {
+                totalIncrease += parseFloat(app.getAttribute('data-increase'));
+            }
+            // Adjust the total increase based on the number of months
+            const monthlyIncrease = totalIncrease / 12;
+            const adjustedIncrease = monthlyIncrease * selectedMonths;
+            const newRevenue = currentRevenue + (currentRevenue * adjustedIncrease / 100);
+            document.getElementById('result').innerHTML = `
+                <p>Current Revenue: $${currentRevenue.toFixed(2)}</p>
+                <p>Total Increase: ${totalIncrease}%</p>
+                <p>Adjusted Increase for ${selectedMonths} Month(s): ${adjustedIncrease.toFixed(2)}%</p>
+                <p>New Revenue: $${newRevenue.toFixed(2)}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
