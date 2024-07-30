@@ -8,13 +8,15 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #F4F4F4;
+            background-color: #f4f4f4;
         }
+
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
+
         input[type="number"],
         input[type="datetime-local"],
         select {
@@ -24,6 +26,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
         button {
             background-color: #4CAF50;
             color: white;
@@ -33,9 +36,11 @@
             cursor: pointer;
             font-size: 16px;
         }
+
         button:hover {
-            background-color: #45A049;
+            background-color: #45a049;
         }
+
         .result {
             margin-top: 20px;
             padding: 10px;
@@ -43,6 +48,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
         .result p {
             margin: 5px 0;
         }
@@ -54,17 +60,18 @@
         <input type="number" id="currentRevenue" step="0.01">
     </div>
     <div>
-        <label for="dateTime">Select Date and Time:</label>
+        <label for="dateTime">Start Date:</label>
         <input type="datetime-local" id="dateTime">
     </div>
     <div>
         <label for="apps">Select Apps:</label>
-        <select id="apps" multiple>
-            <option value="app1" data-increase="10">App 1 (10% increase)</option>
-            <option value="app2" data-increase="15">App 2 (15% increase)</option>
-            <option value="app3" data-increase="20">App 3 (20% increase)</option>
+        <select id="apps" multiple onchange="updateDescription()">
+            <option value="app1" data-increase="10" data-description="This app sends quote reminders.">Quote Reminder (10% increase)</option>
+            <option value="app2" data-increase="15" data-description="This app manages your tasks.">Task Manager (15% increase)</option>
+            <option value="app3" data-increase="20" data-description="This app tracks your expenses.">Expense Tracker (20% increase)</option>
         </select>
     </div>
+    <div id="appDescription"></div>
     <div>
         <label for="months">Select Duration (Months):</label>
         <select id="months">
@@ -75,23 +82,29 @@
     </div>
     <button onclick="calculateRevenue()">Calculate</button>
     <div class="result" id="result"></div>
+
     <script>
         function calculateRevenue() {
             const currentRevenueInput = document.getElementById('currentRevenue').value;
             const currentRevenue = parseFloat(currentRevenueInput);
+
             if (isNaN(currentRevenue)) {
-                document.getElementById('result').innerHTML = <p>Please enter a valid number for current revenue.</p>;
+                document.getElementById('result').innerHTML = `<p>Please enter a valid number for current revenue.</p>`;
                 return;
             }
+
             const selectedApps = document.getElementById('apps').selectedOptions;
             const selectedMonths = parseInt(document.getElementById('months').value);
             let totalIncrease = 0;
+
             for (let app of selectedApps) {
                 totalIncrease += parseFloat(app.getAttribute('data-increase'));
             }
+
             // Adjust the total increase based on the number of months
             const monthlyIncrease = totalIncrease / 12;
             const adjustedIncrease = monthlyIncrease * selectedMonths;
+
             const newRevenue = currentRevenue + (currentRevenue * adjustedIncrease / 100);
             document.getElementById('result').innerHTML = `
                 <p>Current Revenue: $${currentRevenue.toFixed(2)}</p>
@@ -99,6 +112,18 @@
                 <p>Adjusted Increase for ${selectedMonths} Month(s): ${adjustedIncrease.toFixed(2)}%</p>
                 <p>New Revenue: $${newRevenue.toFixed(2)}</p>
             `;
+        }
+
+        function updateDescription() {
+            const selectedApps = document.getElementById('apps').selectedOptions;
+            const descriptionDiv = document.getElementById('appDescription');
+            descriptionDiv.innerHTML = ''; // Clear previous descriptions
+
+            for (let app of selectedApps) {
+                const description = app.getAttribute('data-description');
+                const increase = app.getAttribute('data-increase');
+                descriptionDiv.innerHTML += `<p>${description} (Increase: ${increase}%)</p>`;
+            }
         }
     </script>
 </body>
